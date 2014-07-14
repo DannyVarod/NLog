@@ -232,6 +232,7 @@ namespace NLog
         /// <param name="level">The log level.</param>
         /// <param name="message">A <see langword="string" /> to be written.</param>
         /// <param name="exception">An exception to be logged.</param>
+        [Obsolete("Use Log(LogLevel, String, Exception) method instead.")]
         public void LogException(LogLevel level, [Localizable(false)] string message, Exception exception)
         {
             this.Log(level, message, exception);
@@ -326,7 +327,7 @@ namespace NLog
                 var exceptionCandidate = argument as Exception;
                 if (exceptionCandidate != null)
                 {
-                    this.LogException(level, message, exceptionCandidate);
+                    this.Log(level, message, exceptionCandidate);
                     return;
                 }
 
@@ -1874,6 +1875,14 @@ namespace NLog
         internal void WriteToTargets(LogLevel level, IFormatProvider formatProvider, [Localizable(false)] string message, object[] args)
         {
             LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), LogEventInfo.Create(level, this.Name, formatProvider, message, args), this.Factory);
+        }
+
+        internal void WriteToTargets(LogLevel level, IFormatProvider formatProvider, [Localizable(false)] string message)
+        {
+            // please note that this overload calls the overload of LogEventInfo.Create with object[] parameter on purpose -
+            // to avoid unnecessary string.Format (in case of calling Create(LogLevel, string, IFormatProvider, object))
+            var logEvent = LogEventInfo.Create(level, this.Name, formatProvider, message, (object[])null);
+            LoggerImpl.Write(this.loggerType, this.GetTargetsForLevel(level), logEvent, this.Factory);
         }
 
         internal void WriteToTargets<T>(LogLevel level, IFormatProvider formatProvider, T value)

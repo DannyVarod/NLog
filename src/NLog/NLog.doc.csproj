@@ -49,9 +49,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Abstractions">
-      <HintPath>..\packages\System.IO.Abstractions.1.4.0.32\lib\net35\System.IO.Abstractions.dll</HintPath>
-    </Reference>
     <Reference Include="System.Messaging" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -121,6 +118,8 @@
     <Compile Include="Filters\WhenEqualFilter.cs" />
     <Compile Include="Filters\WhenNotContainsFilter.cs" />
     <Compile Include="Filters\WhenNotEqualFilter.cs" />
+    <Compile Include="Fluent\LogBuilder.cs" />
+    <Compile Include="Fluent\LoggerExtensions.cs" />
     <Compile Include="GDC.cs" />
     <Compile Include="GlobalDiagnosticsContext.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -195,8 +194,6 @@
     <Compile Include="LayoutRenderers\AspApplicationValueLayoutRenderer.cs" />
     <Compile Include="LayoutRenderers\AspRequestValueLayoutRenderer.cs" />
     <Compile Include="LayoutRenderers\AspSessionValueLayoutRenderer.cs" />
-    <Compile Include="LayoutRenderers\AssemblyNameLayoutRenderer.cs" />
-    <Compile Include="LayoutRenderers\AssemblyRetrieveMethod.cs" />
     <Compile Include="LayoutRenderers\AssemblyVersionLayoutRenderer.cs" />
     <Compile Include="LayoutRenderers\BaseDirLayoutRenderer.cs" />
     <Compile Include="LayoutRenderers\CallSiteLayoutRenderer.cs" />

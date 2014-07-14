@@ -31,30 +31,43 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-#if !SILVERLIGHT
+#if !SILVERLIGHT && !MONO
 
-namespace NLog.Internal
+namespace NLog.UnitTests.Targets
 {
+    using System.Diagnostics;
+    using NLog.Config;
+    using NLog.Targets;
     using System;
-    using System.Net;
-    using System.Net.Mail;
+    using System.Linq;
+    using Xunit;
 
-    /// <summary>
-    /// Supports mocking of SMTP Client code.
-    /// </summary>
-    internal interface ISmtpClient : IDisposable
+    public class EventLogTargetTests : NLogTestBase
     {
-        string Host { get; set; }
+        [Fact]
+        public void WriteEventLogEntry()
+        {
+            var target = new EventLogTarget();
+            //The Log to write to is intentionally lower case!!
+            target.Log = "application";  
 
-        int Port { get; set; }
+            SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Debug);
+            var logger = LogManager.GetLogger("WriteEventLogEntry");
+            var el = new EventLog(target.Log);
 
-        int Timeout { get; set; }
+            var latestEntryTime  = el.Entries.Cast<EventLogEntry>().Max(n => n.TimeWritten);
 
-        ICredentialsByHost Credentials { get; set; }
 
-        bool EnableSsl { get; set; }
+            var testValue = Guid.NewGuid();
+            logger.Debug(testValue.ToString());
+            
+            var entryExists = (from entry in el.Entries.Cast<EventLogEntry>()
+                                where entry.TimeWritten >= latestEntryTime
+                                && entry.Message.Contains(testValue.ToString())
+                                select entry).Any();
 
-        void Send(MailMessage msg);
+            Assert.True(entryExists);
+        }
     }
 }
 
